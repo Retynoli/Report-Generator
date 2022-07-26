@@ -11,7 +11,7 @@ to_replace = input('Write word to replace: ')
 
 if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
     words_to_replace = Document(list_path)
-    occurences = {}
+    occurrences = {}
     counter = 0
     
     # Loop through replacer arguments
@@ -19,7 +19,7 @@ if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
         doc = Document(pattern_path)
         print("Current text to replace: " + replaceArg.text)      
         # initialize the number of occurences of this word to 0
-        occurences[to_replace] = 0
+        occurrences[to_replace] = 0
         
         # Loop through paragraphs
         for para in doc.paragraphs:
@@ -33,7 +33,7 @@ if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
                         # if the replaced text is not the same as the original
                         # replace the text and increment the number of occurences
                         run.text = replaced_text
-                        occurences[to_replace] += 1
+                        occurrences[to_replace] += 1
                         
         # Loop through tables
         for table in doc.tables:
@@ -51,10 +51,10 @@ if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
                                     # if the replaced text is not the same as the original
                                     # replace the text and increment the number of occurences
                                     run.text = replaced_text
-                                    occurences[to_replace] += 1
+                                    occurrences[to_replace] += 1
                     
         # print the number of occurences of each word
-        for word, count in occurences.items():
+        for word, count in occurrences.items():
             print(f"The word {word} was found and replaced {count} times.")
 
         # make a new file name by adding "_new" to the original file name
