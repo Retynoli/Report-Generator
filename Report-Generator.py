@@ -37,7 +37,7 @@ if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
-			        # Loop through paragraphs
+                    # Loop through paragraphs
                     for para in cell.paragraphs:
                         # Loop through runs (style spans)
                         for run in para.runs:
