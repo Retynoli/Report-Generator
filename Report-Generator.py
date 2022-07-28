@@ -3,7 +3,7 @@ import re
 # Import docx to work with .docx files.
 from docx import Document
 
-# Store file path from CL Arguments.
+# Store file path from input
 template_path = input('Write template file path: ')
 list_path = input('Write list file path: ')
 to_replace = input('Write word to replace: ')
