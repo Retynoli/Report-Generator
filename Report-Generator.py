@@ -3,10 +3,10 @@ import re
 # Import docx to work with .docx files.
 from docx import Document
 
-# Store file path from input
-template_path = input('Write template file path: ')
-list_path = input('Write list file path: ')
-to_replace = input('Write word to replace: ')
+# Store file paths from input
+template_path = input('Write the full path to the template file : ')
+list_path = input('Write the full path to the list file: ')
+to_replace = input('Write a word to replace: ')
 
 if template_path.endswith('.docx') and list_path.endswith('.docx'):
     words = Document(list_path)
