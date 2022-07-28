@@ -11,7 +11,6 @@ to_replace = input('Write word to replace: ')
 if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
     words_to_replace = Document(list_path)
     occurrences = {}
-    counter = 0
     
     # Loop through replacer arguments
     for replaceArg in words_to_replace.paragraphs:
@@ -57,11 +56,9 @@ if pattern_path.endswith('.docx') and list_path.endswith('.docx'):
             print(f"The word {word} was found and replaced {count} times.")
 
         # make a new file name by adding "_new" to the original file name
-        new_file_path = pattern_path.replace(".docx", "_new" + str(counter) + ".docx")
+        new_file_path = pattern_path.replace(".docx", to_replace + ".docx")
         # save the new docx file
         doc.save(new_file_path)
-
-        counter += 1
 else:
     print('The file type is invalid, only .docx are supported')
 
