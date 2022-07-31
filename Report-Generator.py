@@ -10,11 +10,11 @@ to_replace = input('Write a word to replace: ')
 
 if template_path.endswith('.docx') and list_path.endswith('.docx'):
     words = Document(list_path)
-    
+    counter = 1
     # Loop through replacer arguments
     for replacement in words.paragraphs:
         doc = Document(template_path)
-        print("\nСurrent replacement text: " + replacement.text)
+        print(f"\n[{counter}] Сurrent replacement text: {replacement.text}")
         # initialize the number of occurrences of this word to 0
         occurrences = {to_replace: 0}
         
@@ -56,10 +56,12 @@ if template_path.endswith('.docx') and list_path.endswith('.docx'):
 
         # make a new file name by changing the original file name with current word
         index = template_path.rfind('\\') + 1
-        new_file_path = template_path[:index] + replacement.text + ".docx"
+        filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
+        new_file_path = template_path[:index] + filename + ".docx"
         print('File was saved at ' + new_file_path)
         # save the new docx file
         doc.save(new_file_path)
+        counter += 1
 else:
     print('The file type is invalid, only .docx are supported')
 
