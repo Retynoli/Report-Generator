@@ -6,7 +6,6 @@ from docx import Document
 # First, we create an empty lists to hold the path to all of lists files and words
 list_paths = []
 to_replace = []
-result_path = []
 
 # Store file paths from input
 number_of_lists = input('Write the lists amount: ')
@@ -28,6 +27,7 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
             cnt = 0
             # Loop through replacer arguments
             for replacement in words.paragraphs:
+               # find needed paragraphs
                 if cnt != counter:
                     cnt += 1
                     continue
@@ -82,7 +82,6 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
         filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
         new_file_path = template_path[:index] + filename + ".docx"
         print(f'File was saved at {new_file_path}')
-        result_path.append(new_file_path)
         # save the new docx file
         doc.save(new_file_path)
         counter += 1
