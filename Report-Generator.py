@@ -6,6 +6,7 @@ from docx import Document
 # First, we create an empty lists to hold the path to all of lists files and words
 list_paths = []
 to_replace = []
+result_path = []
 
 # Store file paths from input
 number_of_lists = input('Write the lists amount: ')
@@ -22,6 +23,7 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
     for replacement in words.paragraphs:
         doc = Document(template_path)
         print(f"\n[{counter}] Сurrent replacement text: {replacement.text}")
+
         # initialize the number of occurrences of this word to 0
         occurrences = {to_replace[0]: 0}
 
@@ -66,11 +68,75 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
         # replace all system reserved symbols if found
         filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
         new_file_path = template_path[:index] + filename + ".docx"
-        print('File was saved at ' + new_file_path)
+        print(f'File was saved at {new_file_path}')
+        result_path.append(new_file_path)
         # save the new docx file
         doc.save(new_file_path)
         counter += 1
 else:
     print('The file type is invalid, only .docx are supported')
+
+cnt1 = 0
+cnt2 = 0
+for path in result_path:
+    for i in range(1, int(number_of_lists)):
+        words = Document(list_paths[i])
+        # Loop through replacer arguments
+        for replacement in words.paragraphs:
+            if cnt1 != cnt2:
+                cnt2 += 1
+                continue
+
+            cnt2 = 0
+            doc = Document(path)
+            print(f"\n[{counter}] Сurrent replacement text: {replacement.text}")
+
+            # initialize the number of occurrences of this word to 0
+            occurrences = {to_replace[i]: 0}
+
+            # Loop through paragraphs
+            for paragraph in doc.paragraphs:
+                # Loop through runs (style spans)
+                for run in paragraph.runs:
+                    # if there is text on this run, replace it
+                    if run.text:
+                        # get the replacement text
+                        replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
+                        if replaced_text != run.text:
+                            # if the replaced text is not the same as the original
+                            # replace the text and increment the number of occurrences
+                            run.text = replaced_text
+                            occurrences[to_replace[i]] += 1
+
+            # Loop through tables
+            for table in doc.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        # Loop through paragraphs
+                        for paragraph in cell.paragraphs:
+                            # Loop through runs (style spans)
+                            for run in paragraph.runs:
+                                # if there is text on this run, replace it
+                                if run.text:
+                                    # get the replacement text
+                                    replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
+                                    if replaced_text != run.text:
+                                        # if the replaced text is not the same as the original
+                                        # replace the text and increment the number of occurrences
+                                        run.text = replaced_text
+                                        occurrences[to_replace[i]] += 1
+
+            # print the number of occurrences of each word
+            for word, count in occurrences.items():
+                print(f"The word {word} was found and replaced {count} time(s).")
+
+            print(f'File was saved at {path}')
+            # save the new docx file
+            doc.save(path)
+            counter += 1
+            break
+
+    cnt1 +=1
+
 
 input('\nPress any button to exit...')
