@@ -16,52 +16,65 @@ for i in range(0, int(number_of_lists)):
    list_paths.append(input(f'\n[{i + 1}] Write the full path to the list file: '))
    to_replace.append(input('Write a word to replace for this list: '))
 
-counter = 1
+counter = 0
 if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
     words = Document(list_paths[0])
     # Loop through replacer arguments
     for replacement in words.paragraphs:
         doc = Document(template_path)
-        print(f"\n[{counter}] Сurrent replacement text: {replacement.text}")
 
-        # initialize the number of occurrences of this word to 0
-        occurrences = {to_replace[0]: 0}
+        for i in range(0, int(number_of_lists)):
+            words = Document(list_paths[i])
+            cnt = 0
+            # Loop through replacer arguments
+            for replacement in words.paragraphs:
+                if cnt != counter:
+                    cnt += 1
+                    continue
 
-        # Loop through paragraphs
-        for paragraph in doc.paragraphs:
-            # Loop through runs (style spans)
-            for run in paragraph.runs:
-                # if there is text on this run, replace it
-                if run.text:
-                    # get the replacement text
-                    replaced_text = re.sub(to_replace[0], replacement.text, run.text, 999)
-                    if replaced_text != run.text:
-                        # if the replaced text is not the same as the original
-                        # replace the text and increment the number of occurrences
-                        run.text = replaced_text
-                        occurrences[to_replace[0]] += 1
+                cnt = 0
+                print(f"\n[{counter + 1}] Сurrent replacement text: {replacement.text}")
 
-        # Loop through tables
-        for table in doc.tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    # Loop through paragraphs
-                    for paragraph in cell.paragraphs:
-                        # Loop through runs (style spans)
-                        for run in paragraph.runs:
-                            # if there is text on this run, replace it
-                            if run.text:
-                                # get the replacement text
-                                replaced_text = re.sub(to_replace[0], replacement.text, run.text, 999)
-                                if replaced_text != run.text:
-                                    # if the replaced text is not the same as the original
-                                    # replace the text and increment the number of occurrences
-                                    run.text = replaced_text
-                                    occurrences[to_replace[0]] += 1
+                # initialize the number of occurrences of this word to 0
+                occurrences = {to_replace[i]: 0}
 
-        # print the number of occurrences of each word
-        for word, count in occurrences.items():
-            print(f"The word {word} was found and replaced {count} time(s).")
+                # Loop through paragraphs
+                for paragraph in doc.paragraphs:
+                    # Loop through runs (style spans)
+                    for run in paragraph.runs:
+                        # if there is text on this run, replace it
+                        if run.text:
+                            # get the replacement text
+                            replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
+                            if replaced_text != run.text:
+                                # if the replaced text is not the same as the original
+                                # replace the text and increment the number of occurrences
+                                run.text = replaced_text
+                                occurrences[to_replace[i]] += 1
+
+                # Loop through tables
+                for table in doc.tables:
+                    for row in table.rows:
+                        for cell in row.cells:
+                            # Loop through paragraphs
+                            for paragraph in cell.paragraphs:
+                                # Loop through runs (style spans)
+                                for run in paragraph.runs:
+                                    # if there is text on this run, replace it
+                                    if run.text:
+                                        # get the replacement text
+                                        replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
+                                        if replaced_text != run.text:
+                                            # if the replaced text is not the same as the original
+                                            # replace the text and increment the number of occurrences
+                                            run.text = replaced_text
+                                            occurrences[to_replace[i]] += 1
+
+                # print the number of occurrences of each word
+                for word, count in occurrences.items():
+                    print(f"The word {word} was found and replaced {count} time(s).")
+
+                break
 
         # make a new file name by changing the original file name with current word
         index = template_path.rfind('\\') + 1
@@ -75,68 +88,5 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
         counter += 1
 else:
     print('The file type is invalid, only .docx are supported')
-
-cnt1 = 0
-cnt2 = 0
-for path in result_path:
-    for i in range(1, int(number_of_lists)):
-        words = Document(list_paths[i])
-        # Loop through replacer arguments
-        for replacement in words.paragraphs:
-            if cnt1 != cnt2:
-                cnt2 += 1
-                continue
-
-            cnt2 = 0
-            doc = Document(path)
-            print(f"\n[{counter}] Сurrent replacement text: {replacement.text}")
-
-            # initialize the number of occurrences of this word to 0
-            occurrences = {to_replace[i]: 0}
-
-            # Loop through paragraphs
-            for paragraph in doc.paragraphs:
-                # Loop through runs (style spans)
-                for run in paragraph.runs:
-                    # if there is text on this run, replace it
-                    if run.text:
-                        # get the replacement text
-                        replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
-                        if replaced_text != run.text:
-                            # if the replaced text is not the same as the original
-                            # replace the text and increment the number of occurrences
-                            run.text = replaced_text
-                            occurrences[to_replace[i]] += 1
-
-            # Loop through tables
-            for table in doc.tables:
-                for row in table.rows:
-                    for cell in row.cells:
-                        # Loop through paragraphs
-                        for paragraph in cell.paragraphs:
-                            # Loop through runs (style spans)
-                            for run in paragraph.runs:
-                                # if there is text on this run, replace it
-                                if run.text:
-                                    # get the replacement text
-                                    replaced_text = re.sub(to_replace[i], replacement.text, run.text, 999)
-                                    if replaced_text != run.text:
-                                        # if the replaced text is not the same as the original
-                                        # replace the text and increment the number of occurrences
-                                        run.text = replaced_text
-                                        occurrences[to_replace[i]] += 1
-
-            # print the number of occurrences of each word
-            for word, count in occurrences.items():
-                print(f"The word {word} was found and replaced {count} time(s).")
-
-            print(f'File was saved at {path}')
-            # save the new docx file
-            doc.save(path)
-            counter += 1
-            break
-
-    cnt1 +=1
-
 
 input('\nPress any button to exit...')
