@@ -1,6 +1,8 @@
 # Import re for regex functions
 import re
 # Import docx to work with .docx files.
+import sys
+
 from docx import Document
 
 # First, we create an empty lists to hold the path to all of lists files and words
@@ -12,34 +14,40 @@ number_of_lists = input('Write the lists amount: ')
 template_path = input('Write the full path to the template file: ')
 
 for i in range(0, int(number_of_lists)):
-   list_paths.append(input(f'\n[{i + 1}] Write the full path to the list file: '))
-   to_replace.append(input('Write a word to replace for this list: '))
+    path = input(f'\n[{i + 1}] Write the full path to the list file: ')
+    word = input('Write a word to replace for this list: ')
+
+    if path.endswith('.docx') and template_path.endswith('.docx'):
+        list_paths.append(path)
+        to_replace.append(word)
+    else:
+        print('The file type is invalid, only .docx are supported')
+        input('\nPress any button to exit...')
+        sys.exit()
 
 counter = 0
-if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
-    words = Document(list_paths[0])
-    # Loop through replacer arguments
-    for replacement in words.paragraphs:
-        doc = Document(template_path)
+words = Document(list_paths[0])
 
-        for i in range(0, int(number_of_lists)):
-            words = Document(list_paths[i])
-            cnt = 0
-            # Loop through replacer arguments
-            for replacement in words.paragraphs:
-               # find needed paragraphs
-                if cnt != counter:
-                    cnt += 1
-                    continue
+# Loop through replacer arguments
+for replacement in words.paragraphs:
+    template = Document(template_path)
 
-                cnt = 0
+    for i in range(0, int(number_of_lists)):
+        words = Document(list_paths[i])
+        cnt = 0
+        # Loop through replacer arguments
+        for replacement in words.paragraphs:
+            # Find needed paragraphs
+            if cnt != counter:
+                cnt += 1
+            else:
                 print(f"\n[{counter + 1}] Сurrent replacement text: {replacement.text}")
 
-                # initialize the number of occurrences of this word to 0
+                # Initialize the number of occurrences of this word to 0
                 occurrences = {to_replace[i]: 0}
 
                 # Loop through paragraphs
-                for paragraph in doc.paragraphs:
+                for paragraph in template.paragraphs:
                     # Loop through runs (style spans)
                     for run in paragraph.runs:
                         # if there is text on this run, replace it
@@ -53,7 +61,7 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
                                 occurrences[to_replace[i]] += 1
 
                 # Loop through tables
-                for table in doc.tables:
+                for table in template.tables:
                     for row in table.rows:
                         for cell in row.cells:
                             # Loop through paragraphs
@@ -70,22 +78,27 @@ if template_path.endswith('.docx') and list_paths[0].endswith('.docx'):
                                             run.text = replaced_text
                                             occurrences[to_replace[i]] += 1
 
-                # print the number of occurrences of each word
+                # Print the number of occurrences of each word
                 for word, count in occurrences.items():
                     print(f"The word {word} was found and replaced {count} time(s).")
 
                 break
 
+    new_filepath = ''
+
+    if int(number_of_lists) > 1:
+        new_filepath = template_path.replace(".docx", "_new" + str(counter + 1) + ".docx")
+    else:
         # make a new file name by changing the original file name with current word
         index = template_path.rfind('\\') + 1
         # replace all system reserved symbols if found
         filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
-        new_file_path = template_path[:index] + filename + ".docx"
-        print(f'File was saved at {new_file_path}')
-        # save the new docx file
-        doc.save(new_file_path)
-        counter += 1
-else:
-    print('The file type is invalid, only .docx are supported')
+        new_filepath = template_path[:index] + filename + ".docx"
+
+    print(f'File was saved at {new_filepath}')
+
+    # save the new docx file
+    template.save(new_filepath)
+    counter += 1
 
 input('\nPress any button to exit...')
