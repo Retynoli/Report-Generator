@@ -1,8 +1,8 @@
 # Import re for regex functions
 import re
-# Import docx to work with .docx files.
+# Import sys for sys exit
 import sys
-
+# Import docx to work with .docx files.
 from docx import Document
 
 # First, we create an empty lists to hold the path to all of lists files and words
@@ -84,16 +84,11 @@ for replacement in words.paragraphs:
 
                 break
 
-    new_filepath = ''
-
-    if int(number_of_lists) > 1:
-        new_filepath = template_path.replace(".docx", "_new" + str(counter + 1) + ".docx")
-    else:
-        # make a new file name by changing the original file name with current word
-        index = template_path.rfind('\\') + 1
-        # replace all system reserved symbols if found
-        filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
-        new_filepath = template_path[:index] + filename + ".docx"
+    # make a new file name by changing the original file name with current word
+    index = template_path.rfind('\\') + 1
+    # replace all system reserved symbols if found
+    filename = replacement.text.translate({ord(c): "-" for c in '\/:*?"<>|'})
+    new_filepath = template_path[:index] + str(counter + 1) + ". " + filename + ".docx"
 
     print(f'File was saved at {new_filepath}')
 
