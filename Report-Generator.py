@@ -1,7 +1,7 @@
 # Import re for regex functions
 import re
 # Import sys for sys exit
-import sys
+from sys import exit
 # Import docx to work with .docx files.
 from docx import Document
 
@@ -23,7 +23,7 @@ for i in range(0, int(number_of_lists)):
     else:
         print('The file type is invalid, only .docx are supported')
         input('\nPress any button to exit...')
-        sys.exit()
+        exit()
 
 counter = 0
 words = Document(list_paths[0])
@@ -80,7 +80,7 @@ for replacement in words.paragraphs:
 
                 # Print the number of occurrences of each word
                 for word, count in occurrences.items():
-                    print(f"The word {word} was found and replaced {count} time(s).")
+                    print(f"The word {word} was found and replaced by {replacement.text} {count} time(s).")
 
                 break
 
